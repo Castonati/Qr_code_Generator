@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QXR CODE | Castonati</title>
+    <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/generator.css">
+    <link rel="stylesheet" href="css/scanner.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <nav>
+            <button class="nav-gene active">Generator</button>
+            <button class="nav-scan">Scanner</button>
+        </nav>
+
+        <div class="generator">
+            <h1>QR Code Generator</h1>
+            <p>Paste a URL or Enter a text to create a QR code</p>
+
+            <div class="generator-form">
+                <input type="text" placeholder="Enter a text or URL">
+                <button>Generate QR Code</button>
+            </div>
+
+            <div class="generator-img">
+                <img src="./images/qr-code.png" alt="qr-code">
+            </div>
+
+            <div class="generator-btn">
+                <button class="btn-link">Download <i class="fa-solid fa-download"></i></button>
+            </div>
+        </div>
+
+        <div class="scanner" style="display: none;">
+            <h1>
+                QR Code Scanner or Reader<i class="fa-solid fa-camera"></i><i class="fa-solid fa-circle-stop"></i>
+            </h1>
+
+            <div id="reader" style="width: 100%; height: 400px;"></div>
+            <div class="scanner-details">
+                <textarea id="scan-result" disabled>Scan result will appear here...</textarea>
+                <div class="btn">
+                    <button id="close-scanner" class="close">Close</button>
+                    <button id="copy-result" class="copy">Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <h4>Hello Lets connect on Linkedin</h4>
+            <div class="icon2">
+                <a href="https://github.com/Castonati" target="_blank">
+                    <p><i class="fa-brands fa-github fa-2xl"></i> &nbsp;GitHub</p>
+                </a>
+                <a href="https://www.linkedin.com/in/ankit-kumar-yadav-03a2491b8/" target="_blank">
+                    <p><i class="fa-brands fa-linkedin fa-2xl"></i>&nbsp; linkedin</p>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/generator.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const qrCodeScanner = new Html5Qrcode("reader");
+
+            const startScanner = () => {
+                qrCodeScanner.start(
+                    { facingMode: "environment" },
+                    {
+                        fps: 10,
+                        qrbox: 250 
+                    },
+                    (decodedText, decodedResult) => {
+                        
+                        document.getElementById('scan-result').value = decodedText;
+                    },
+                    (errorMessage) => {
+                        
+                        console.error(errorMessage);
+                    }
+                ).catch((err) => {
+                    console.error(`Failed to start QR code scanner: ${err}`);
+                });
+            };
+
+            const stopScanner = () => {
+                qrCodeScanner.stop().then(() => {
+                    console.log("QR code scanning stopped.");
+                }).catch((err) => {
+                    console.error(`Failed to stop QR code scanner: ${err}`);
+                });
+            };
+
+            document.querySelector('.nav-scan').addEventListener('click', function() {
+                document.querySelector('.generator').style.display = 'none';
+                document.querySelector('.scanner').style.display = 'block';
+                startScanner();
+            });
+
+            document.querySelector('.nav-gene').addEventListener('click', function() {
+                stopScanner();
+                document.querySelector('.scanner').style.display = 'none';
+                document.querySelector('.generator').style.display = 'block';
+            });
+
+            document.getElementById('close-scanner').addEventListener('click', function() {
+                stopScanner();
+                document.querySelector('.scanner').style.display = 'none';
+                document.querySelector('.generator').style.display = 'block';
+            });
+
+            document.getElementById('copy-result').addEventListener('click', function() {
+                const result = document.getElementById('scan-result');
+                result.select();
+                document.execCommand('copy');
+                alert('QR code content copied to clipboard!');
+            });
+        });
+    </script>
+</body>
+
+</html>
